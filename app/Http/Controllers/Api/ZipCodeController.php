@@ -2,27 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Filters\LocationFilters;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Psr7\Request;
-use App\Http\Services\ZipCodeApi;
-use GuzzleHttp\Client;
+use App\Models\Location;
 use Illuminate\Support\Facades\Http;
+use App\Traits\RespondsJson;
 
 class ZipCodeController extends Controller
 {
-    public $zipCodeApi;
-
-    public function __construct()
-    {
-        $this->zipCodeApi = new ZipCodeApi;
-    }
+    use RespondsJson;
 
     public function index($zipcode)
     {
-        $res = $this->zipCodeApi->getZipCodeData($zipcode);
-
-        // $response = Http::get('https://jobs.backbonesystems.io/api/zip-codes/15530');
-        // return $response->json();
-        return response()->json($res);
+        $res = Location::where('zipcode', $zipcode)->first();
+        
+        return $this->jsonResponse($res);
     }
 }
