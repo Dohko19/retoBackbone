@@ -12,10 +12,10 @@ class ZipCodeController extends Controller
 {
     use RespondsJson;
 
-    public function index($zipcode)
+    public function index($zip_code)
     {
-        $res = Location::where('zipcode', $zipcode)->first();
-        
+        $res = Location::where('zipcode', $zip_code)->first();
+
         return $this->jsonResponse($res);
     }
 }
