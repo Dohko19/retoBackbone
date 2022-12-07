@@ -28,27 +28,41 @@ trait RespondsJson
             ]);
         }
 
-        return response()->json([
-            "zip_code" => $data->zipcode,
-            "locality" => Str::upper($data->municipality),
-            "federal_entity" => [
-                "key" => (int)$data->state_code,
-                "name" => Str::upper($data->state),
-                "code" => null
-            ],
-            "settlements" => [[
-                "key" => (int)$data->settlement_id,
-                "name" => Str::upper($data->settlement),
-                "zone_type" => Str::upper($data->zone),
-                "settlement_type" => [
-                    "name" => $data->settlement_type
-                ]]
-            ],
-            "municipality" => [
-                "key" => (int)$data->municipality_code,
-                "name" => Str::upper($data->municipality)
-            ]
-        ]);
+        foreach($data as $key => $location){
+
+            $settlements[] = [
+                    "key" => (int)$location->settlement_id,
+                    "name" => Str::upper($location->settlement),
+                    "zone_type" => Str::upper($location->zone),
+                    "settlement_type" => [
+                        "name" => $location->settlement_type
+                    ]
+                ];
+
+            if($key === 0){
+                $commonData = [
+                        "zip_code" => $location->zipcode,
+                        "locality" => Str::upper($location->municipality),
+                        "federal_entity" => [
+                            "key" => (int)$location->state_code,
+                            "name" => Str::upper($location->state),
+                            "code" => null
+                        ],
+                    ];
+                $municipality = [
+                        "municipality" => [
+                            "key" => (int)$location->municipality_code,
+                            "name" => Str::upper($location->municipality)
+                        ]
+                    ];
+            }
+
+        }
+        $t["settlements"] = $settlements;
+
+        $response = array_merge($commonData, $t, $municipality);
+
+        return response()->json($response);
     }
 
     /**

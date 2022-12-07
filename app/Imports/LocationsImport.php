@@ -16,21 +16,22 @@ class LocationsImport implements ToModel, WithHeadingRow, WithCustomCsvSettings,
 
     public function model(array $row)
     {
+
         return new Location([
-            'zipcode'               => $row['d_codigo'] ?? null,
-            'settlement'            => $row['d_asenta'] ?? null,
-            'settlement_type'       => $row['d_tipo_asenta'] ?? null,
-            'municipality'          => $row['d_mnpio'] ?? null,
-            'state'                 => $row['d_estado'] ?? null,
-            'city'                  => $row['d_ciudad'] ?? null,
-            'd_cp'                  => $row['d_cp'] ?? null,
-            'state_code'            => $row['c_estado'] ?? null,
-            'office_code'           => $row['c_oficina'] ?? null,
-            'settlement_type_code'  => $row['c_tipo_asenta'] ?? null,
-            'municipality_code'     => $row['c_mnpio'] ?? null,
-            'settlement_id'         => $row['id_asenta_cpcons'] ?? null,
-            'zone'                  => $row['d_zona'],
-            'city_code'             => $row['c_cve_ciudad'],
+            'zipcode'               => $row["d_codigo"] ?? null,
+            'settlement'            => $this->eliminar_tildes($row["d_asenta"]) ?? null,
+            'settlement_type'       => $this->eliminar_tildes($row["d_tipo_asenta"]) ?? null,
+            'municipality'          => $this->eliminar_tildes($row["d_mnpio"]) ?? null,
+            'state'                 => $this->eliminar_tildes($row["d_estado"]) ?? null,
+            'city'                  => $this->eliminar_tildes($row["d_ciudad"]) ?? null,
+            'd_cp'                  => $row["d_cp"] ?? null,
+            'state_code'            => $this->eliminar_tildes($row["c_estado"]) ?? null,
+            'office_code'           => $row["c_oficina"] ?? null,
+            'settlement_type_code'  => $row["c_tipo_asenta"] ?? null,
+            'municipality_code'     => $this->eliminar_tildes($row["c_mnpio"]) ?? null,
+            'settlement_id'         => $row["id_asenta_cpcons"] ?? null,
+            'zone'                  => $this->eliminar_tildes($row["d_zona"]),
+            'city_code'             => $row["c_cve_ciudad"],
         ]);
     }
 
@@ -44,10 +45,12 @@ class LocationsImport implements ToModel, WithHeadingRow, WithCustomCsvSettings,
         return 1000;
     }
 
-    public function getCsvSettings(): array
-    {
-        return [
-            'delimiter' => '|',
-        ];
+    function eliminar_tildes($cadena){
+
+    $originales = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿ';
+    $modificadas = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyyby';
+    $cadena = utf8_decode($cadena);
+    $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
+    return utf8_encode($cadena);
     }
 }

@@ -21,7 +21,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Artisan::command('seed-locations', function () {
-    $this->comment('Seeding locations from database/catalogs/locations.csv...');
-    (new LocationsImport())->import(database_path('catalogs/locations.csv'), null, Excel::CSV);
+    $this->comment('Seeding locations from database/catalogs/locations2.xls...');
+    (new LocationsImport())->import(database_path('catalogs/locations2.xls'), null, Excel::XLS);
     $this->comment('Completed.');
 })->purpose('Seed locations');

@@ -14,7 +14,8 @@ class ZipCodeController extends Controller
 
     public function index($zip_code)
     {
-        $res = Location::where('zipcode', $zip_code)->first();
+
+        $res = Location::where('zipcode', $zip_code)->get();
 
         return $this->jsonResponse($res);
     }
